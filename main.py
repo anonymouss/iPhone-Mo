@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import config
-import requests, sys, time
+import requests, sys, time, webbrowser
 from wxpy import *
 
 DEBUG_MODE = False
@@ -16,18 +16,27 @@ def init():
     #embed()
 
 def monitor():
-    print('start monitor')
-    results = requests.get(config.url, headers=config.headers).json()
+    results = requests.get(config.check_url, headers=config.headers).json()
     stores = results['stores']
     messages = []
+    reserve_urls = {}
     for store in config.stores:
         if store in stores:
             inventories = stores[store]
             for model in inventories:
-                if inventories[model]['availability']['unlocked'] and model in config.models:
+                if inventories[model]['availability']['unlocked'] and model in config.models_selected:
                     storeName = config.stores[store]
-                    modelName = config.models[model]
+                    modelName = config.models_selected[model]
                     messages.append('{} {}店有货！'.format(modelName, storeName))
+                    reserve_urls[model] = config.reserve_url.format(store, model)
+    most_desired = None
+    for model in config.models_selected:
+        if model in reserve_urls:
+            print(reserve_urls[model])
+            most_desired = reserve_urls[model]
+            break
+    if most_desired:
+        webbrowser.open_new(most_desired)
     if messages:
         print(messages)
         for receiver in receivers:

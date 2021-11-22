@@ -2,8 +2,11 @@ receivers = [
     'Meow'
 ]
 
-url = "https://reserve-prime.apple.com/MO/zh_MO/reserve/A/availability.json" # iPhone 13 pro (max)
-url2 = "https://reserve-prime.apple.com/MO/zh_MO/reserve/D/availability.json" # iPhone 13 (mini)
+check_url = "https://reserve-prime.apple.com/MO/zh_MO/reserve/A/availability.json" # iPhone 13 pro (max)
+check_url2 = "https://reserve-prime.apple.com/MO/zh_MO/reserve/D/availability.json" # iPhone 13 (mini)
+
+reserve_url = "https://reserve-prime.apple.com/MO/zh_MO/reserve/A/availability?&store={}&iUP=N&appleCare=N&rv=0&partNumber={}" # pro
+reserve_url2 = "https://reserve-prime.apple.com/MO/zh_MO/reserve/D/availability?&store={}&iUP=N&appleCare=N&rv=0&partNumber={}" # 13 & mini
 
 stores = {
     'R672': '澳門銀河',
@@ -14,23 +17,11 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36',
 }
 
-models = {
-    'MLT83ZA/A': 'iPhone 13 Pro 远峰蓝色 128GB',
-    'MLTE3ZA/A': 'iPhone 13 Pro 远峰蓝色 256GB',
-    'MLTJ3ZA/A': 'iPhone 13 Pro 远峰蓝色 512GB',
-    'MLTN3ZA/A': 'iPhone 13 Pro 远峰蓝色 1TB',
-    'MLT63ZA/A': 'iPhone 13 Pro 银色 128GB',
-    'MLTC3ZA/A': 'iPhone 13 Pro 银色 256GB',
-    'MLTG3ZA/A': 'iPhone 13 Pro 银色 512GB',
-    'MLTL3ZA/A': 'iPhone 13 Pro 银色 1TB',
-    'MLT73ZA/A': 'iPhone 13 Pro 金色 128GB',
-    'MLTD3ZA/A': 'iPhone 13 Pro 金色 256GB',
-    'MLTH3ZA/A': 'iPhone 13 Pro 金色 512GB',
-    'MLTM3ZA/A': 'iPhone 13 Pro 金色 1TB',
-    'MLT53ZA/A': 'iPhone 13 Pro 石墨色 128GB',
+models_selected = {
     'MLT93ZA/A': 'iPhone 13 Pro 石墨色 256GB',
-    'MLTF3ZA/A': 'iPhone 13 Pro 石墨色 512GB',
-    'MLTK3ZA/A': 'iPhone 13 Pro 石墨色 1TB',
+    'MLTE3ZA/A': 'iPhone 13 Pro 远峰蓝色 256GB',
+    'MLTC3ZA/A': 'iPhone 13 Pro 银色 256GB',
+    'MLTD3ZA/A': 'iPhone 13 Pro 金色 256GB', 
 }
 
 models_full = {
