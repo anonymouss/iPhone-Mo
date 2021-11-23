@@ -5,6 +5,7 @@ import requests, sys, time, webbrowser
 from wxpy import *
 
 DEBUG_MODE = False
+MAX_RETRY = 5
 receivers = []
 
 def init():
@@ -46,6 +47,12 @@ def monitor():
     else:
         return False
 
+def notify_error(count):
+    for receiver in receivers:
+            receiver.send('received exception {}/{} at {}'.format(count, MAX_RETRY, now()))
+
+def now():
+    return time.asctime(time.localtime(time.time()))
 
 if __name__ == '__main__':
     if not DEBUG_MODE:
@@ -53,9 +60,21 @@ if __name__ == '__main__':
             print('init failed')
             sys.exit(0)
 
+    count = 0
+    done = False
+    print('start monitoring')
     while(True):
-        if monitor():
-            print("found @",  time.asctime(time.localtime(time.time())))
+        try:
+            done = monitor()
+        except Exception as e:
+            count += 1
+            print(e.messages, " at {}".format(now()))
+            if count > MAX_RETRY:
+                sys.exit(0)
+            notify_error(count)
+            time.sleep(30)
+        if done:
+            print("found @", now())
             if DEBUG_MODE:
                 break
-            time.sleep(30);
+            time.sleep(60);
