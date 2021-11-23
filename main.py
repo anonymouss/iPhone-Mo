@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 
 import config
-import requests, sys, time, webbrowser
+import requests, sys, time, webbrowser, traceback
 from wxpy import *
 
 DEBUG_MODE = False
-MAX_RETRY = 5
+MAX_RETRIES = 5
 receivers = []
 
-def init():
+def init_wechat():
     bot = Bot()
     for receiver in config.receivers:
         receivers.append(bot.friends().search(receiver)[0])
     print(receivers)
-    return len(receivers) != 0
-    #embed()
 
 def monitor():
     results = requests.get(config.check_url, headers=config.headers).json()
@@ -26,9 +24,9 @@ def monitor():
             inventories = stores[store]
             for model in inventories:
                 if inventories[model]['availability']['unlocked'] and model in config.models_selected:
-                    storeName = config.stores[store]
-                    modelName = config.models_selected[model]
-                    messages.append('{} {}店有货！'.format(modelName, storeName))
+                    store_name = config.stores[store]
+                    model_name = config.models_selected[model]
+                    messages.append('{} {}店有货！'.format(model_name, store_name))
                     reserve_urls[model] = config.reserve_url.format(store, model)
     most_desired = None
     for model in config.models_selected:
@@ -49,32 +47,31 @@ def monitor():
 
 def notify_error(count):
     for receiver in receivers:
-            receiver.send('received exception {}/{} at {}'.format(count, MAX_RETRY, now()))
+            receiver.send('received exception {}/{} at {}'.format(count, MAX_RETRIES, now()))
 
 def now():
     return time.asctime(time.localtime(time.time()))
 
 if __name__ == '__main__':
     if not DEBUG_MODE:
-        if not init():
-            print('init failed')
-            sys.exit(0)
+        init_wechat()
 
-    count = 0
+    error_count = 0
     done = False
     print('start monitoring')
-    while(True):
+    while(error_count < MAX_RETRIES):
         try:
             done = monitor()
         except Exception as e:
-            count += 1
-            print(e.messages, " at {}".format(now()))
-            if count > MAX_RETRY:
-                sys.exit(0)
-            notify_error(count)
-            time.sleep(30)
+            error_count += 1
+            print('Exception @ '.format(now()))
+            traceback.print_exc()
+            notify_error(error_count)
+            time.sleep(60)
         if done:
             print("found @", now())
             if DEBUG_MODE:
                 break
             time.sleep(60);
+
+    print("Exit.")
