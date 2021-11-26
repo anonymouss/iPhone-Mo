@@ -1,5 +1,5 @@
 receivers = [
-    'Meow'
+    'Meow', '皮昂'
 ]
 
 check_url = "https://reserve-prime.apple.com/MO/zh_MO/reserve/A/availability.json" # iPhone 13 pro (max)
